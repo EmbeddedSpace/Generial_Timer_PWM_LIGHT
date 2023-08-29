@@ -99,6 +99,9 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+    uint32_t  sysFreq = HAL_RCC_GetSysClockFreq();
+    uint32_t  prescaler = htim2.Init.Prescaler;
+    uint32_t  period = htim2.Init.Period;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -114,11 +117,17 @@ int main(void)
           lightPWDValue--;
       }
 
-      if(lightPWDValue > 200)
+      if(lightPWDValue > 500)
           dir = 0;
       if(lightPWDValue == 0)
           dir = 1;
       __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, lightPWDValue);
+      printf("Freq: %d\t", sysFreq / prescaler /period );
+      printf("Duty: %f\n", ((lightPWDValue* 1.0) / period) * 100 );
+      printf("CCR=%d,", lightPWDValue);
+      printf("PWM=%d,", __HAL_TIM_GET_COUNTER(&htim2) > lightPWDValue ? 0: 500);
+
+
   }
   /* USER CODE END 3 */
 }
